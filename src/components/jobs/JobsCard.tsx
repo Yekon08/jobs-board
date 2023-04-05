@@ -5,19 +5,49 @@ import {
   Typography,
   CardActions,
   Button,
+  IconButton,
 } from "@mui/material";
 import { jobsDesc } from "../../interfaces/jobs";
 import dayjs from "dayjs";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { deleteDoc, doc } from "firebase/firestore";
+import { db } from "../../FirebaseConfig";
+import { toast } from "react-toastify";
 
 interface Props {
   data: jobsDesc;
+  handleFetchJobs: () => Promise<void>;
 }
 
-const JobsCard = ({ data }: Props) => {
+const style = {
+  position: "absolute",
+  top: "10px",
+  right: "10px",
+};
+
+const JobsCard = ({ data, handleFetchJobs }: Props) => {
+  const removeCard = async () => {
+    try {
+      await deleteDoc(doc(db, "jobs", `${data.id}`));
+      handleFetchJobs();
+      toast.error("Supprimé !");
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
   return (
-    <Box sx={{ marginTop: 6 }}>
+    <Box sx={{ marginTop: 6, position: "relative" }}>
       <Card variant="elevation">
         <CardContent>
+          <IconButton
+            aria-label="delete"
+            size="large"
+            sx={style}
+            onClick={removeCard}
+          >
+            <DeleteIcon />
+          </IconButton>
           <Typography
             sx={{ fontSize: 14 }}
             color={

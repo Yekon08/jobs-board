@@ -53,7 +53,7 @@ const JobsList = () => {
         </Button>
       </Box>
       {jobsList.map((job: jobsDesc) => (
-        <JobsCard key={job.id} data={job} />
+        <JobsCard key={job.id} data={job} handleFetchJobs={handleFetchJobs} />
       ))}
 
       <ModalContainer
