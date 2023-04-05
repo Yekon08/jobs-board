@@ -1,17 +1,20 @@
+import { useState, FormEvent, ChangeEvent, useContext } from "react";
 import { Box, Modal } from "@mui/material";
 import dayjs, { Dayjs } from "dayjs";
-import { useState, FormEvent, ChangeEvent } from "react";
 import "dayjs/locale/fr";
 import { addDoc, CollectionReference, DocumentData } from "firebase/firestore";
 import { toast } from "react-toastify";
 import { jobsDesc } from "../../../interfaces/jobs";
+import { userContext } from "../../../interfaces/user";
 import ModalContent from "./ModalContent";
+import { UserContext } from "../../../context/userContext";
 
 interface Props {
   open: boolean;
   handleClose: () => void;
   type: "add" | "remove" | "edit";
   jobsCollectionRef: CollectionReference<DocumentData>;
+  handleFetchJobs: () => Promise<void>;
 }
 
 const style = {
@@ -21,22 +24,26 @@ const style = {
   transform: "translate(-50%, -50%)",
 };
 
+const initialValues = {
+  title: "",
+  status: "En cours",
+  site: "",
+  note: "",
+  link: "",
+  salary: 0,
+  type: "CDI",
+};
+
 const ModalContainer = ({
   open,
   handleClose,
   type,
   jobsCollectionRef,
+  handleFetchJobs,
 }: Props) => {
-  const [jobValues, setJobValues] = useState<jobsDesc>({
-    title: "",
-    status: "En cours",
-    site: "",
-    note: "",
-    link: "",
-    salary: 0,
-    type: "CDI",
-  });
+  const [jobValues, setJobValues] = useState<jobsDesc>(initialValues);
   const [date, setDate] = useState<Dayjs | null>(dayjs());
+  const { currentUser }: userContext = useContext(UserContext);
 
   const handleJobValues = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -53,9 +60,12 @@ const ModalContainer = ({
       await addDoc(jobsCollectionRef, {
         ...jobValues,
         date: dayjs(date).format(),
+        userId: currentUser?.uid,
       });
-      toast.success("Ajouté !");
+      setJobValues(initialValues);
+      handleFetchJobs();
       handleClose();
+      toast.success("Ajouté !");
     } catch (err) {
       console.log(err);
     }

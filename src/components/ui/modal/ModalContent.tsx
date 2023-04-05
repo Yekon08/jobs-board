@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction, ChangeEvent, FormEvent } from "react";
 import {
   Card,
   Container,
@@ -13,7 +14,6 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import "dayjs/locale/fr";
 import { statusValues, contractType, jobsDesc } from "../../../interfaces/jobs";
 import { Dayjs } from "dayjs";
-import { Dispatch, SetStateAction, ChangeEvent, FormEvent } from "react";
 
 interface Props {
   jobValues: jobsDesc;

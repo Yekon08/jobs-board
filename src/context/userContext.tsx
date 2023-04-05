@@ -7,8 +7,11 @@ import {
   User,
 } from "firebase/auth";
 import { auth, googleProvider } from "../FirebaseConfig";
+import { userContext } from "../interfaces/user";
 
-export const UserContext = createContext({});
+export const UserContext = createContext<userContext>({
+  currentUser: null,
+});
 
 export const UserContextProvider = ({ children }: PropsWithChildren) => {
   const handleSignInGoogle = async () => {
@@ -27,7 +30,7 @@ export const UserContextProvider = ({ children }: PropsWithChildren) => {
     }
   };
 
-  const [currentUser, setCurrentUser] = useState<User | null>();
+  const [currentUser, setCurrentUser] = useState<User | null | undefined>();
   const [loadingData, setLoadingData] = useState<boolean>(true);
 
   useEffect(() => {

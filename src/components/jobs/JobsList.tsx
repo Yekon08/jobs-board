@@ -1,23 +1,32 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { db } from "../../FirebaseConfig";
-import { getDocs, collection } from "firebase/firestore";
+import { getDocs, collection, query, where } from "firebase/firestore";
 import JobsCard from "./JobsCard";
 import { jobsDesc } from "../../interfaces/jobs";
 import { Button, Container, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import ModalContainer from "../ui/modal/ModalContainer";
+import { UserContext } from "../../context/userContext";
+import { userContext } from "../../interfaces/user";
 
 const JobsList = () => {
   const [jobsList, setJobsList] = useState<[] | jobsDesc[] | any>([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const { currentUser }: userContext = useContext(UserContext);
+
+  if (!currentUser) {
+    return null;
+  }
 
   const jobsCollectionRef = collection(db, "jobs");
+  const q = query(jobsCollectionRef, where("userId", "==", currentUser.uid));
 
   const handleFetchJobs = async () => {
     try {
-      const data = await getDocs(jobsCollectionRef);
+      const data = await getDocs(q);
+
       const filteredData = data.docs.map((doc) => ({
         ...doc.data(),
         id: doc.id,
@@ -31,10 +40,6 @@ const JobsList = () => {
   useEffect(() => {
     handleFetchJobs();
   }, []);
-
-  if (jobsList.length === 0) {
-    return <Container maxWidth="md">Ajoute des travaux ...</Container>;
-  }
 
   return (
     <Container maxWidth="md">
@@ -56,6 +61,7 @@ const JobsList = () => {
         handleClose={handleClose}
         type="add"
         jobsCollectionRef={jobsCollectionRef}
+        handleFetchJobs={handleFetchJobs}
       />
     </Container>
   );

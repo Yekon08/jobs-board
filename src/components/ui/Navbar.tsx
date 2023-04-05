@@ -11,17 +11,9 @@ import {
   Tooltip,
   MenuItem,
 } from "@mui/material";
-
-import { User } from "firebase/auth";
-
 import PhonelinkSharpIcon from "@mui/icons-material/PhonelinkSharp";
 import { UserContext } from "../../context/userContext";
-
-interface userContext {
-  currentUser: User | null;
-  handleSignInGoogle: () => void;
-  handleSignOutGoogle: () => void;
-}
+import { userContext } from "../../interfaces/user";
 
 const ResponsiveAppBar = () => {
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
@@ -34,11 +26,8 @@ const ResponsiveAppBar = () => {
     setAnchorElUser(null);
   };
 
-  const {
-    currentUser,
-    handleSignInGoogle,
-    handleSignOutGoogle,
-  }: userContext | Record<string, never> = useContext(UserContext);
+  const { currentUser, handleSignInGoogle, handleSignOutGoogle }: userContext =
+    useContext(UserContext);
 
   const userSettings = (
     <>
