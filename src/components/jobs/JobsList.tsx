@@ -5,10 +5,10 @@ import JobsCard from "./JobsCard";
 import { jobsDesc } from "../../interfaces/jobs";
 import { Button, Container, Box } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
-import ModalContainer from "../ui/ModalContainer";
+import ModalContainer from "../ui/modal/ModalContainer";
 
 const JobsList = () => {
-  const [jobsList, setJobsList] = useState<[] | jobsDesc[]>([]);
+  const [jobsList, setJobsList] = useState<[] | jobsDesc[] | any>([]);
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -33,7 +33,7 @@ const JobsList = () => {
   }, []);
 
   if (jobsList.length === 0) {
-    return <p>Add some jobs ...</p>;
+    return <Container maxWidth="md">Ajoute des travaux ...</Container>;
   }
 
   return (
@@ -47,7 +47,7 @@ const JobsList = () => {
           <AddIcon /> ajouter un travail
         </Button>
       </Box>
-      {jobsList.map((job) => (
+      {jobsList.map((job: jobsDesc) => (
         <JobsCard key={job.id} data={job} />
       ))}
 

@@ -1,86 +1,38 @@
 import {
-  Box,
   Card,
   Container,
-  Modal,
   TextField,
   Typography,
   MenuItem,
   InputAdornment,
   Button,
 } from "@mui/material";
-import dayjs, { Dayjs } from "dayjs";
-import { useState, FormEvent, ChangeEvent } from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import "dayjs/locale/fr";
-import { addDoc, CollectionReference, DocumentData } from "firebase/firestore";
-
-const statusValues = [
-  "En cours",
-  "Refusé",
-  "Accepté",
-  "Test technique",
-  "Call RH",
-];
-
-const contractType = ["CDI", "Freelance"];
+import { statusValues, contractType, jobsDesc } from "../../../interfaces/jobs";
+import { Dayjs } from "dayjs";
+import { Dispatch, SetStateAction, ChangeEvent, FormEvent } from "react";
 
 interface Props {
-  open: boolean;
-  handleClose: () => void;
-  type: "add" | "remove" | "edit";
-  jobsCollectionRef: CollectionReference<DocumentData>;
+  jobValues: jobsDesc;
+  setDate: Dispatch<SetStateAction<Dayjs | null>>;
+  handleJobValues: (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => void;
+  handleJobForm: (e: FormEvent<EventTarget>) => Promise<void>;
+  date: Dayjs | null;
 }
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-};
-
-const ModalContainer = ({
-  open,
-  handleClose,
-  type,
-  jobsCollectionRef,
+const ModalContent = ({
+  jobValues,
+  setDate,
+  handleJobValues,
+  handleJobForm,
+  date,
 }: Props) => {
-  const [jobValues, setJobValues] = useState({
-    title: "",
-    status: "En cours",
-    site: "",
-    note: "",
-    link: "",
-    salary: 0,
-    type: "CDI",
-  });
-
-  const [date, setDate] = useState<Dayjs | null>(null);
-
-  const handleJobValues = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setJobValues({
-      ...jobValues,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleJobForm = async (e: FormEvent<EventTarget>) => {
-    e.preventDefault();
-    try {
-      await addDoc(jobsCollectionRef, {
-        ...jobValues,
-        date: dayjs(date).format(),
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  };
-
-  const addJob = (
+  return (
     <Card variant="elevation" sx={{ p: 4 }}>
       <Typography variant="h6" component="h2" gutterBottom align="center">
         Ajouter un travail :
@@ -159,7 +111,6 @@ const ModalContainer = ({
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="fr">
           <DatePicker
             label="Date"
-            defaultValue={dayjs()}
             value={date}
             onChange={(newValue) => setDate(newValue)}
           />
@@ -178,17 +129,6 @@ const ModalContainer = ({
       </Container>
     </Card>
   );
-
-  return (
-    <Modal
-      open={open}
-      onClose={handleClose}
-      aria-labelledby="modal-modal-title"
-      aria-describedby="modal-modal-description"
-    >
-      <Box sx={style}>{type === "add" ? addJob : <p>error</p>}</Box>
-    </Modal>
-  );
 };
 
-export default ModalContainer;
+export default ModalContent;
