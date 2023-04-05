@@ -3,10 +3,15 @@ import { db } from "../../FirebaseConfig";
 import { getDocs, collection } from "firebase/firestore";
 import JobsCard from "./JobsCard";
 import { jobsDesc } from "../../interfaces/jobs";
-import { Container } from "@mui/material";
+import { Button, Container, Box } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
+import ModalContainer from "../ui/ModalContainer";
 
 const JobsList = () => {
   const [jobsList, setJobsList] = useState<[] | jobsDesc[]>([]);
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const jobsCollectionRef = collection(db, "jobs");
 
@@ -27,17 +32,31 @@ const JobsList = () => {
     handleFetchJobs();
   }, []);
 
-  console.log("data: ", jobsList);
-
   if (jobsList.length === 0) {
     return <p>Add some jobs ...</p>;
   }
 
   return (
     <Container maxWidth="md">
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Button
+          variant="contained"
+          onClick={handleOpen}
+          sx={{ display: "flex", alignItems: "center", marginTop: "50px" }}
+        >
+          <AddIcon /> ajouter un travail
+        </Button>
+      </Box>
       {jobsList.map((job) => (
         <JobsCard key={job.id} data={job} />
       ))}
+
+      <ModalContainer
+        open={open}
+        handleClose={handleClose}
+        type="add"
+        jobsCollectionRef={jobsCollectionRef}
+      />
     </Container>
   );
 };

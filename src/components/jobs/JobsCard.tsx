@@ -7,6 +7,7 @@ import {
   Button,
 } from "@mui/material";
 import { jobsDesc } from "../../interfaces/jobs";
+import dayjs from "dayjs";
 
 interface Props {
   data: jobsDesc;
@@ -14,14 +15,14 @@ interface Props {
 
 const JobsCard = ({ data }: Props) => {
   return (
-    <Box sx={{ marginTop: 10 }}>
+    <Box sx={{ marginTop: 6 }}>
       <Card variant="elevation">
         <CardContent>
           <Typography variant="h5" component="div" gutterBottom>
             {data.title}
           </Typography>
           <Typography sx={{ fontSize: 14 }} color="text.secondary">
-            {data.date}
+            {dayjs(data.date).format("DD/MM/YYYY")}
           </Typography>
           <Typography sx={{ mb: 1.5 }} color="text.secondary">
             {data.status}
@@ -29,9 +30,7 @@ const JobsCard = ({ data }: Props) => {
           <Typography variant="body2">{data.note}</Typography>
         </CardContent>
         <CardActions>
-          <Button href={data.comeFrom} size="small">
-            Learn More
-          </Button>
+          <Button size="small">Learn More</Button>
         </CardActions>
       </Card>
     </Box>

@@ -15,7 +15,7 @@ import {
 import { User } from "firebase/auth";
 
 import PhonelinkSharpIcon from "@mui/icons-material/PhonelinkSharp";
-import { UserContext } from "../context/userContext";
+import { UserContext } from "../../context/userContext";
 
 interface userContext {
   currentUser: User | null;

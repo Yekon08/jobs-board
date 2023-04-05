@@ -5,6 +5,7 @@ export interface jobsDesc {
   note?: string;
   link?: string;
   date?: string;
-  comeFrom?: string;
+  salary?: number;
+  type?: string;
   id: string;
 }
